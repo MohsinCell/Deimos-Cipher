@@ -31,4 +31,4 @@
 ## **Installation & Usage**  
 Clone the repository:  
 ```bash
-git clone https://github.com/MohsinCell/"Mars Cipher".git
+git clone https://github.com/MohsinCell/"Mars-Cipher".git
