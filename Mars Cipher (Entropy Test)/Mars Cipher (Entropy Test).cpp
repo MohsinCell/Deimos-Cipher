@@ -11,7 +11,7 @@
 #include <sodium.h>
 #include <cstring>
 
-// **🔑 Key Expansion using HKDF (BLAKE2b)**
+// Key Expansion using HKDF (BLAKE2b)
 std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, const std::vector<uint8_t>& salt) {
     std::array<std::vector<uint8_t>, 3> keys;
     std::vector<uint8_t> prk(128);
@@ -42,7 +42,7 @@ std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, 
     return keys;
 }
 
-// **🔐 Generate HMAC (SHA-256)**
+// Generate HMAC (SHA-256)
 std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::vector<uint8_t>& key) {
     std::vector<uint8_t> hmac(SHA256_DIGEST_LENGTH);
     unsigned int len = SHA256_DIGEST_LENGTH;
@@ -51,7 +51,7 @@ std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::v
     return hmac;
 }
 
-// **🔒 Mars Cipher Encryption**
+// Mars Cipher Encryption
 std::vector<uint8_t> marsCipherEncrypt(const std::string& plaintext, const std::string& password) {
     std::vector<uint8_t> salt(32);
     randombytes_buf(salt.data(), salt.size());
@@ -81,7 +81,7 @@ std::vector<uint8_t> marsCipherEncrypt(const std::string& plaintext, const std::
     return ciphertext;
 }
 
-// **🔓 Mars Cipher Decryption**
+// Mars Cipher Decryption
 std::string marsCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std::string& password) {
     if (ciphertext.size() < 32 + crypto_stream_xchacha20_NONCEBYTES + SHA256_DIGEST_LENGTH) {
         return "Error: Ciphertext too short!";
@@ -113,7 +113,7 @@ std::string marsCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std:
     return std::string(encryptedData.begin(), encryptedData.end());
 }
 
-// **📊 Entropy Calculation**
+// Entropy Calculation
 double calculateEntropy(const std::vector<uint8_t>& data) {
     int freq[256] = {0};
     for (uint8_t byte : data) {
@@ -130,7 +130,7 @@ double calculateEntropy(const std::vector<uint8_t>& data) {
     return entropy;
 }
 
-// **🛠 Main Function (Encrypt / Decrypt CLI)**
+// Main Function (Encrypt / Decrypt CLI)
 int main() {
     if (sodium_init() < 0) {
         std::cerr << "Failed to initialize libsodium" << std::endl;
