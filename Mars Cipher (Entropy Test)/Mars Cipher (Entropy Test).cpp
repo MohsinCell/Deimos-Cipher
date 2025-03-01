@@ -67,7 +67,7 @@ std::vector<uint8_t> marsCipherEncrypt(const std::string& plaintext, const std::
 
     for (size_t i = 0; i < plaintextVec.size(); ++i) {
         plaintextVec[i] ^= keystream[i];
-        plaintextVec[i] = (plaintextVec[i] + 37) ^ 23;  // 🔥 Nonlinear mixing
+        plaintextVec[i] = (plaintextVec[i] + 37) ^ 23;  // Nonlinear mixing
     }
 
     std::vector<uint8_t> hmac = generateHMAC(plaintextVec, keys[2]);
