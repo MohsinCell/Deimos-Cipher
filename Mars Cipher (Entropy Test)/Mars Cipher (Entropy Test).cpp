@@ -106,7 +106,7 @@ std::string marsCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std:
     crypto_stream_xchacha20(keystream.data(), keystream.size(), nonce, keys[0].data());
 
     for (size_t i = 0; i < encryptedData.size(); ++i) {
-        encryptedData[i] = (encryptedData[i] ^ 23) - 37;  // 🔥 Reverse nonlinear mixing
+        encryptedData[i] = (encryptedData[i] ^ 23) - 37;  // Reverse nonlinear mixing
         encryptedData[i] ^= keystream[i];
     }
 
