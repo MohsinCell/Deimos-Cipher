@@ -5,8 +5,8 @@
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 #include <vector>
-#include <cstring>
 #include <iostream>
+#include <cstring>
 
 // Secure Key Expansion using HKDF with BLAKE2b
 std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, const std::vector<uint8_t>& salt) {
