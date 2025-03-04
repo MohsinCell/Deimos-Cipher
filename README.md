@@ -16,7 +16,7 @@
 ## **Repository Structure**  
 📂 **Deimos Cipher** – Full encryption & decryption implementation  
 📂 **Deimos Cipher API** – Local library version for easy integration  
-📂 **Deimos Cipher (Entropy Test)** – Includes Mars Cipher entropy analysis  
+📂 **Deimos Cipher (Entropy Test)** – Includes Deimos Cipher entropy analysis  
 
 ## **Performance Benchmarks**  
 - **Encryption Time (1MB file):** `0.230857s`  
