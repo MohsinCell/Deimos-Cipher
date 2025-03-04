@@ -1,8 +1,8 @@
-# **Mars Cipher** 
+# **Deimos Cipher** 
 **Next-Gen Encryption | High Security | Maximum Entropy**  
 
 ## **Overview**  
-**Mars Cipher** is an encryption algorithm designed to maximize security, entropy, and efficiency. Built with modern cryptographic principles, it ensures top-tier confidentiality and integrity for sensitive data.  
+**Deimos Cipher** is an encryption algorithm designed to maximize security, entropy, and efficiency. Built with modern cryptographic principles, it ensures top-tier confidentiality and integrity for sensitive data.  
 
 ## **Features**  
 - ✅ **High Entropy Output** – Achieves near-perfect **7.99998 bits/byte** randomness  
@@ -14,9 +14,9 @@
 - ✅ **Optimized for Performance** – Balances security and speed efficiently  
 
 ## **Repository Structure**  
-📂 **Mars Cipher** – Full encryption & decryption implementation  
-📂 **Mars Cipher API** – Local library version for easy integration  
-📂 **Mars Cipher (Entropy Test)** – Includes Mars Cipher entropy analysis  
+📂 **Deimos Cipher** – Full encryption & decryption implementation  
+📂 **Deimos Cipher API** – Local library version for easy integration  
+📂 **Deimos Cipher (Entropy Test)** – Includes Mars Cipher entropy analysis  
 
 ## **Performance Benchmarks**  
 - **Encryption Time (1MB file):** `0.230857s`  
@@ -31,4 +31,4 @@
 ## **Installation & Usage**  
 Clone the repository:  
 ```bash
-git clone https://github.com/MohsinCell/"Mars-Cipher".git
+git clone https://github.com/MohsinCell/"Deimos-Cipher".git
