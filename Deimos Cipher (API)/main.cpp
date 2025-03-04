@@ -2,7 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
-int main() {
+int main() 
+    {
     if (sodium_init() < 0) {
         std::cerr << "Failed to initialize libsodium" << std::endl;
         return 1;
