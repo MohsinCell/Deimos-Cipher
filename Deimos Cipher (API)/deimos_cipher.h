@@ -16,10 +16,10 @@ std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, 
 // HMAC Generation (SHA-256)
 std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::vector<uint8_t>& key);
 
-// Mars Cipher Encryption
+// Deimos Cipher Encryption
 std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std::string& password);
 
-// Mars Cipher Decryption
+// Deimos Cipher Decryption
 std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std::string& password);
 
 #endif 
