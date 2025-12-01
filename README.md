@@ -31,4 +31,4 @@
 ## **Installation & Usage**  
 Clone the repository:  
 ```bash
-git clone https://github.com/MohsinCell/"Deimos-Cipher".git
+git clone https://github.com/MohsinCell/Deimos-Cipher.git
