@@ -1,43 +1,45 @@
 #include "deimos_cipher.h"
-#include <sodium.h>
-#include <openssl/evp.h>
-#include <openssl/kdf.h>
-#include <openssl/hmac.h>
-#include <openssl/sha.h>
-#include <vector>
-#include <iostream>
 #include <cstring>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/kdf.h>
+#include <openssl/sha.h>
+#include <iostream>
+#include <sodium.h>
+#include <vector>
 
-// Secure Key Expansion using HKDF with BLAKE2b
 std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, const std::vector<uint8_t>& salt) {
     std::array<std::vector<uint8_t>, 3> keys;
     std::vector<uint8_t> prk(64);
-    
+
     EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, nullptr);
     EVP_PKEY_derive_init(pctx);
-    EVP_PKEY_CTX_set_hkdf_md(pctx, EVP_blake2b512()); // BLAKE2b-512
+    EVP_PKEY_CTX_set_hkdf_md(pctx, EVP_blake2b512());
     EVP_PKEY_CTX_set1_hkdf_salt(pctx, salt.data(), salt.size());
     EVP_PKEY_CTX_set1_hkdf_key(pctx, reinterpret_cast<const unsigned char*>(password.data()), password.size());
-    EVP_PKEY_derive(pctx, prk.data(), nullptr);
+    size_t prkLen = prk.size();
+    EVP_PKEY_derive(pctx, prk.data(), &prkLen);
     EVP_PKEY_CTX_free(pctx);
 
     for (int i = 0; i < 3; ++i) {
         keys[i].resize(32);
         std::vector<uint8_t> info = {'K', 'E', 'Y', static_cast<uint8_t>(i)};
-        
+
         EVP_PKEY_CTX* key_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, nullptr);
         EVP_PKEY_derive_init(key_ctx);
-        EVP_PKEY_CTX_set_hkdf_md(key_ctx, EVP_blake2b512()); 
+        EVP_PKEY_CTX_set_hkdf_md(key_ctx, EVP_blake2b512());
         EVP_PKEY_CTX_set1_hkdf_salt(key_ctx, salt.data(), salt.size());
         EVP_PKEY_CTX_set1_hkdf_key(key_ctx, prk.data(), prk.size());
         EVP_PKEY_CTX_add1_hkdf_info(key_ctx, info.data(), info.size());
-        EVP_PKEY_derive(key_ctx, keys[i].data(), nullptr);
+
+        size_t keyLen = keys[i].size();
+        EVP_PKEY_derive(key_ctx, keys[i].data(), &keyLen);
         EVP_PKEY_CTX_free(key_ctx);
     }
+
     return keys;
 }
 
-// Generate HMAC (SHA-256)
 std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::vector<uint8_t>& key) {
     std::vector<uint8_t> hmac(SHA256_DIGEST_LENGTH);
     unsigned int len = SHA256_DIGEST_LENGTH;
@@ -46,7 +48,6 @@ std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::v
     return hmac;
 }
 
-// Deimos Cipher Encryption
 std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std::string& password) {
     std::vector<uint8_t> salt(32);
     randombytes_buf(salt.data(), salt.size());
@@ -75,7 +76,6 @@ std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std
     return ciphertext;
 }
 
-// Deimos Cipher Decryption
 std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std::string& password) {
     if (ciphertext.size() < 32 + crypto_stream_xchacha20_NONCEBYTES + SHA256_DIGEST_LENGTH) {
         return "Error: Ciphertext too short!";
@@ -85,7 +85,7 @@ std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const st
     unsigned char nonce[crypto_stream_xchacha20_NONCEBYTES];
     std::memcpy(nonce, ciphertext.data() + 32, crypto_stream_xchacha20_NONCEBYTES);
 
-    std::vector<uint8_t> encryptedData(ciphertext.begin() + 32 + crypto_stream_xchacha20_NONCEBYTES, 
+    std::vector<uint8_t> encryptedData(ciphertext.begin() + 32 + crypto_stream_xchacha20_NONCEBYTES,
                                        ciphertext.end() - SHA256_DIGEST_LENGTH);
     std::vector<uint8_t> receivedHMAC(ciphertext.end() - SHA256_DIGEST_LENGTH, ciphertext.end());
 

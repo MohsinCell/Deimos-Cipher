@@ -1,0 +1,57 @@
+# Build artifacts
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+*.dll
+*.dll.a
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+*.exp
+*.pdb
+*.ilk
+
+# CMake and Make build outputs
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.swo
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/

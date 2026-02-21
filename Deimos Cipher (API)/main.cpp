@@ -1,9 +1,9 @@
 #include "deimos_cipher.h"
-#include <iostream>
-#include <iomanip>
 
-int main() 
-    {
+#include <iomanip>
+#include <iostream>
+
+int main() {
     if (sodium_init() < 0) {
         std::cerr << "Failed to initialize libsodium" << std::endl;
         return 1;
@@ -12,7 +12,6 @@ int main()
     std::string input;
     char choice;
 
-    // User Decision
     std::cout << "Welcome to Deimos Cipher!\nDo you want to encrypt or decrypt? (E/D): ";
     std::cin >> choice;
     std::cin.ignore();
@@ -29,19 +28,20 @@ int main()
     std::cout << "Enter the key: ";
     std::getline(std::cin, password);
 
-    std::vector<uint8_t> ciphertext = deimosCipherEncrypt(input, password);
-
     if (choice == 'E' || choice == 'e') {
+        std::vector<uint8_t> ciphertext = deimosCipherEncrypt(input, password);
         std::cout << "Ciphertext (hex): ";
-        for (uint8_t c : ciphertext)
-            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)c;
-        std::cout << std::endl; }
-
-    else {
+        for (uint8_t c : ciphertext) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c);
+        }
+        std::cout << std::endl;
+    } else {
         std::vector<uint8_t> ciphertext;
-        for (size_t i = 0; i < input.length(); i += 2)
+        for (size_t i = 0; i < input.length(); i += 2) {
             ciphertext.push_back(std::stoi(input.substr(i, 2), nullptr, 16));
-        std::cout << "Plaintext: " << deimosCipherDecrypt(ciphertext, password) << std::endl; }
+        }
+        std::cout << "Plaintext: " << deimosCipherDecrypt(ciphertext, password) << std::endl;
+    }
 
     return 0;
 }

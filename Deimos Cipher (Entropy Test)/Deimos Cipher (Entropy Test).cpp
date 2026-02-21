@@ -1,17 +1,16 @@
-#include <iostream>
-#include <vector>
 #include <array>
-#include <string>
+#include <cstring>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 #include <openssl/evp.h>
-#include <openssl/kdf.h>
 #include <openssl/hmac.h>
+#include <openssl/kdf.h>
 #include <openssl/sha.h>
 #include <sodium.h>
-#include <cstring>
+#include <string>
+#include <vector>
 
-// Key Expansion using HKDF (BLAKE2b)
 std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, const std::vector<uint8_t>& salt) {
     std::array<std::vector<uint8_t>, 3> keys;
     std::vector<uint8_t> prk(128);
@@ -21,7 +20,8 @@ std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, 
     EVP_PKEY_CTX_set_hkdf_md(pctx, EVP_blake2b512());
     EVP_PKEY_CTX_set1_hkdf_salt(pctx, salt.data(), salt.size());
     EVP_PKEY_CTX_set1_hkdf_key(pctx, reinterpret_cast<const unsigned char*>(password.data()), password.size());
-    EVP_PKEY_derive(pctx, prk.data(), nullptr);
+    size_t prkLen = prk.size();
+    EVP_PKEY_derive(pctx, prk.data(), &prkLen);
     EVP_PKEY_CTX_free(pctx);
 
     for (int i = 0; i < 3; ++i) {
@@ -35,14 +35,14 @@ std::array<std::vector<uint8_t>, 3> deriveKeysHKDF(const std::string& password, 
         EVP_PKEY_CTX_set1_hkdf_key(key_ctx, prk.data(), prk.size());
         EVP_PKEY_CTX_add1_hkdf_info(key_ctx, info.data(), info.size());
 
-        EVP_PKEY_derive(key_ctx, keys[i].data(), nullptr);
+        size_t keyLen = keys[i].size();
+        EVP_PKEY_derive(key_ctx, keys[i].data(), &keyLen);
         EVP_PKEY_CTX_free(key_ctx);
     }
 
     return keys;
 }
 
-// Generate HMAC (SHA-256)
 std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::vector<uint8_t>& key) {
     std::vector<uint8_t> hmac(SHA256_DIGEST_LENGTH);
     unsigned int len = SHA256_DIGEST_LENGTH;
@@ -51,7 +51,6 @@ std::vector<uint8_t> generateHMAC(const std::vector<uint8_t>& data, const std::v
     return hmac;
 }
 
-// Deimos Cipher Encryption
 std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std::string& password) {
     std::vector<uint8_t> salt(32);
     randombytes_buf(salt.data(), salt.size());
@@ -67,7 +66,7 @@ std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std
 
     for (size_t i = 0; i < plaintextVec.size(); ++i) {
         plaintextVec[i] ^= keystream[i];
-        plaintextVec[i] = (plaintextVec[i] + 37) ^ 23;  // 🔥 Nonlinear mixing
+        plaintextVec[i] = static_cast<uint8_t>((plaintextVec[i] + 37) ^ 23);
     }
 
     std::vector<uint8_t> hmac = generateHMAC(plaintextVec, keys[2]);
@@ -81,7 +80,6 @@ std::vector<uint8_t> deimosCipherEncrypt(const std::string& plaintext, const std
     return ciphertext;
 }
 
-// Deimos Cipher Decryption
 std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const std::string& password) {
     if (ciphertext.size() < 32 + crypto_stream_xchacha20_NONCEBYTES + SHA256_DIGEST_LENGTH) {
         return "Error: Ciphertext too short!";
@@ -91,7 +89,7 @@ std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const st
     unsigned char nonce[crypto_stream_xchacha20_NONCEBYTES];
     std::memcpy(nonce, ciphertext.data() + 32, crypto_stream_xchacha20_NONCEBYTES);
 
-    std::vector<uint8_t> encryptedData(ciphertext.begin() + 32 + crypto_stream_xchacha20_NONCEBYTES, 
+    std::vector<uint8_t> encryptedData(ciphertext.begin() + 32 + crypto_stream_xchacha20_NONCEBYTES,
                                        ciphertext.end() - SHA256_DIGEST_LENGTH);
     std::vector<uint8_t> receivedHMAC(ciphertext.end() - SHA256_DIGEST_LENGTH, ciphertext.end());
 
@@ -106,14 +104,13 @@ std::string deimosCipherDecrypt(const std::vector<uint8_t>& ciphertext, const st
     crypto_stream_xchacha20(keystream.data(), keystream.size(), nonce, keys[0].data());
 
     for (size_t i = 0; i < encryptedData.size(); ++i) {
-        encryptedData[i] = (encryptedData[i] ^ 23) - 37;  // 🔥 Reverse nonlinear mixing
+        encryptedData[i] = static_cast<uint8_t>((encryptedData[i] ^ 23) - 37);
         encryptedData[i] ^= keystream[i];
     }
 
     return std::string(encryptedData.begin(), encryptedData.end());
 }
 
-// Entropy Calculation
 double calculateEntropy(const std::vector<uint8_t>& data) {
     int freq[256] = {0};
     for (uint8_t byte : data) {
@@ -130,7 +127,6 @@ double calculateEntropy(const std::vector<uint8_t>& data) {
     return entropy;
 }
 
-// Main Function (Encrypt / Decrypt CLI)
 int main() {
     if (sodium_init() < 0) {
         std::cerr << "Failed to initialize libsodium" << std::endl;

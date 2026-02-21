@@ -1,26 +1,26 @@
-# Deimos Cipher  
-### A High-Security Encryption Algorithm with Extreme Diffusion and Entropy  
+# Deimos Cipher CLI
 
-## Overview  
-Deimos Cipher is a modern encryption algorithm designed for maximum security. It features:  
-✅ **Key Expansion using HKDF with BLAKE2b** for strong key derivation  
-✅ **XChaCha20 Encryption** for high-speed and secure encryption  
-✅ **HMAC-SHA256 Authentication** for integrity verification  
-✅ **Extreme Avalanche Effect** (50.18% average bit change with minor input modification)  
-✅ **High Entropy** (7.99998 bits per byte with 1MB plaintext)  
+This directory contains the standalone C++ command-line implementation of Deimos Cipher.
 
-## Features  
-- **Unparalleled Diffusion & Entropy**: Tests show Deimos Cipher outperforms AES and ChaCha20 in randomness.  
-- **Quantum-Resistant Framework (Future Upgrade Planned)**  
-- **Strong Key Sensitivity**: A single-bit change in the key results in a **50.54%** ciphertext on an average.  
+## What It Does
 
-Deimos Cipher prioritizes security while maintaining reasonable performance.  
+- Derives keys from a password with HKDF + BLAKE2b.
+- Encrypts with XChaCha20.
+- Authenticates ciphertext with HMAC-SHA256.
+- Supports encryption and decryption from the terminal.
 
-## Installation & Usage  
-### Compiling and Running Deimos Cipher  
+## Build
+
+Run these commands from this directory:
+
 ```bash
-g++ -o deimos_cipher "Deimos Cipher".cpp -lsodium -lssl -lcrypto
+g++ -std=c++17 -O2 -o deimos_cipher "Deimos Cipher.cpp" -lsodium -lssl -lcrypto
 ./deimos_cipher
+```
 
+## Usage
 
-
+1. Choose `E` to encrypt or `D` to decrypt.
+2. Enter plaintext or hex ciphertext based on your selection.
+3. Enter the key when prompted.
+4. Read the output from the terminal.

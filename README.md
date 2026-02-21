@@ -1,34 +1,65 @@
-# **Deimos Cipher** 
-**Next-Gen Encryption | High Security | Maximum Entropy**  
+# Deimos Cipher
 
-## **Overview**  
-**Deimos Cipher** is an encryption algorithm designed to maximize security, entropy, and efficiency. Built with modern cryptographic principles, it ensures top-tier confidentiality and integrity for sensitive data.  
+Deimos Cipher is an encryption project that combines HKDF (BLAKE2b), XChaCha20, and HMAC-SHA256. This repository includes a standalone CLI implementation, an API-style C++ core for integration, and entropy test suites.
 
-## **Features**  
-- ✅ **High Entropy Output** – Achieves near-perfect **7.99998 bits/byte** randomness  
-- ✅ **50.18% Average Avalanche Effect** – Every bit change drastically alters the ciphertext  
-- ✅ **Extreme Key Sensitivity** – A single-bit change in the key results in **50.54% different ciphertext on an average**  
-- ✅ **Secure Key Expansion** – Uses **HKDF with BLAKE2b** for robust key derivation  
-- ✅ **XChaCha20 Stream Encryption** – Enhanced security with a **192-bit nonce**  
-- ✅ **HMAC-SHA256 Authentication** – Ensures data integrity and authenticity  
-- ✅ **Optimized for Performance** – Balances security and speed efficiently  
+## Web App
 
-## **Repository Structure**  
-📂 **Deimos Cipher** – Full encryption & decryption implementation  
-📂 **Deimos Cipher API** – Local library version for easy integration  
-📂 **Deimos Cipher (Entropy Test)** – Includes Deimos Cipher entropy analysis  
+You can also use the browser application at [deimoscipher.space](https://deimoscipher.space) to encrypt and decrypt text, images, and videos directly in your browser.
 
-## **Performance Benchmarks**  
-- **Encryption Time (1MB file):** `0.230857s`  
-- **Decryption Time (1MB file):** `0.256726s`  
-- **Entropy (1MB ciphertext):** `7.99998 bits per byte`  
+## Repository Layout
 
-## **Security Tests**  
-- **Avalanche Effect:** `50.18% bit change`  
-- **Key Sensitivity:** `50.54% ciphertext change for a 1-bit key difference`  
-- **Entropy Test:** `Near-perfect randomness`  
+- `Deimos Cipher/`: standalone CLI encryption and decryption program.
+- `Deimos Cipher (API)/`: reusable C++ core with a demo `main.cpp`.
+- `Deimos Cipher (Entropy Test)/`: entropy-focused C++ and Python test programs.
 
-## **Installation & Usage**  
-Clone the repository:  
+## Cryptographic Workflow
+
+1. Derive internal keys from password + random salt using HKDF with BLAKE2b.
+2. Encrypt plaintext with XChaCha20 keystream XOR.
+3. Compute HMAC-SHA256 over encrypted payload for integrity verification.
+4. Output payload as `salt | nonce | ciphertext | hmac`.
+
+## Prerequisites
+
+- C++17 compiler (`g++` recommended)
+- OpenSSL development libraries
+- libsodium
+- Python 3.10+ and `cryptography` (only for the Python entropy script)
+
+## Build and Run
+
+### Standalone CLI
+
 ```bash
-git clone https://github.com/MohsinCell/Deimos-Cipher.git
+g++ -std=c++17 -O2 -o deimos_cipher "Deimos Cipher/Deimos Cipher.cpp" -lsodium -lssl -lcrypto
+./deimos_cipher
+```
+
+### API Demo
+
+```bash
+g++ -std=c++17 -O2 -o deimos_api_demo "Deimos Cipher (API)/main.cpp" "Deimos Cipher (API)/Deimos Cipher Core.cpp" -lsodium -lssl -lcrypto
+./deimos_api_demo
+```
+
+### Entropy Tests
+
+```bash
+g++ -std=c++17 -O2 -o entropy_cli "Deimos Cipher (Entropy Test)/Deimos Cipher (Entropy Test).cpp" -lsodium -lssl -lcrypto -lm
+./entropy_cli
+
+g++ -std=c++17 -O2 -o entropy_large "Deimos Cipher (Entropy Test)/Deimos Cipher (Large Data Set Entropy Test).cpp" -lsodium -lssl -lcrypto -lm
+./entropy_large
+```
+
+For the Python entropy test:
+
+```bash
+pip install cryptography
+python "Deimos Cipher (Entropy Test)/Deimos Cipher (Large Data Set Entropy Test).py"
+```
+
+## Notes
+
+- This project is useful for experimentation and learning, but it has not been externally audited.
+- Use strong secrets and secure key handling if you integrate it into a real system.
